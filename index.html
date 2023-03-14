@@ -1,0 +1,78 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Photo Viewer</title>
+    <style>
+      .photos-container {
+        display: flex;
+        flex-wrap: wrap;
+      }
+      .photo {
+        width: 200px;
+        height: 200px;
+        margin: 10px;
+        cursor: pointer;
+      }
+      .photo:hover {
+        opacity: 0.8;
+      }
+      .big-photo {
+        width: 500px;
+        height: 500px;
+        display: none;
+      }
+      .album {
+        margin: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="photos-container"></div>
+    <img class="big-photo" />
+    <div class="albums-container"></div>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+      const photosContainer = document.querySelector(".photos-container");
+      const bigPhoto = document.querySelector(".big-photo");
+      const albumsContainer = document.querySelector(".albums-container");
+
+      // Fetch photos
+      axios
+        .get("https://jsonplaceholder.typicode.com/photos")
+        .then((response) => {
+          const photos = response.data.slice(0, 10);
+          photos.forEach((photo) => {
+            const photoElement = document.createElement("img");
+            photoElement.src = photo.thumbnailUrl;
+            photoElement.alt = photo.title;
+            photoElement.classList.add("photo");
+            photoElement.addEventListener("click", () => {
+              bigPhoto.src = photo.url;
+              bigPhoto.style.display = "block";
+            });
+            photosContainer.appendChild(photoElement);
+          });
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+
+      // Fetch albums
+      axios
+        .get("https://jsonplaceholder.typicode.com/albums")
+        .then((response) => {
+          const albums = response.data.slice(0, 10);
+          albums.forEach((album) => {
+            const albumElement = document.createElement("div");
+            albumElement.textContent = `Album ${album.id}: ${album.title}`;
+            albumElement.classList.add("album");
+            albumsContainer.appendChild(albumElement);
+          });
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    </script>
+  </body>
+</html>
